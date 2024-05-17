@@ -7,7 +7,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { constanst } from '../secrets';
+import { secrets } from '../secrets';
 import { IS_PUBLIC_KEY } from '../decorators/auth.decorator';
 import { RedisService } from '../common/services/redis/redis.service';
 import { UserPayload } from '../common/types/user.type';
@@ -39,7 +39,7 @@ export class AuthGuard implements CanActivate {
     }
     try {
       const payload: UserPayload = await this.jwtService.verifyAsync(token, {
-        secret: constanst.JWT_SECRET,
+        secret: secrets.JWT_SECRET,
       });
 
       const isSessionExists = await this.verifySession(payload, token);

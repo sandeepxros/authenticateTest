@@ -2,15 +2,12 @@ import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './auth/auth.module';
-import { constanst } from './config/secrets';
+import { APIModule } from './api/api.module';
+import { secrets } from './config/secrets';
 import { AuthGuard } from './config/gaurds/auth.gaurd';
 import { TypeOrmConfigService } from './datasource/typeorm.config';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { RedisModule } from './config/common/services/redis/redis.module';
-import { ContactsModule } from './contacts/contacts.module';
-import { User } from './entities/user.entity';
-import { GlobalPhoneBook } from './entities/globalPhonebook.entity';
 @Module({
   imports: [
     ThrottlerModule.forRoot([
@@ -21,15 +18,14 @@ import { GlobalPhoneBook } from './entities/globalPhonebook.entity';
     ]),
     JwtModule.register({
       global: true,
-      secret: constanst.JWT_SECRET,
+      secret: secrets.JWT_SECRET,
       signOptions: { expiresIn: '5h' },
     }),
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
     }),
     RedisModule.forRoot(),
-    AuthModule,
-    ContactsModule
+    APIModule,
   ],
   controllers: [],
   providers: [

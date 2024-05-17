@@ -17,10 +17,8 @@ import { LoginDTO } from './dto/login.dto';
 import { SignUpDTO } from './dto/signup.dto';
 import { UpdatePasswordDTO } from './dto/updatePassword.dto';
 import { UpdateProfileDTO } from './dto/updateProfileDto';
-import { User } from '../entities/user.entity';
 import { PhoneNumberService } from 'src/config/common/services/utility/phoneNumber.service';
-import { ContactsService } from 'src/contacts/contacts.service';
-import { GlobalPhoneBook } from 'src/entities/globalPhonebook.entity';
+import { User } from '../entities/user.entity';
 
 type SessionID = string;
 @Injectable()
@@ -28,8 +26,6 @@ export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly repository: Repository<User>,
-    @InjectRepository(GlobalPhoneBook)
-    private readonly globalPhoneBook: Repository<GlobalPhoneBook>,
     private readonly jwtService: JwtService,
     private readonly redis: RedisService,
     private readonly phoneNumberService: PhoneNumberService,
@@ -73,10 +69,6 @@ export class AuthService {
     user.regionCode = phoneNumberMetaData.regionCode;
 
     await user.save();
-
-    const globalPhoneBook = this.globalPhoneBook.create(user);
-    globalPhoneBook.addedBy = user;
-    globalPhoneBook.save();
 
     return { message: 'User signed up successfully' };
   }

@@ -6,7 +6,7 @@ import {
   HttpStatus,
   Post,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserPayload } from 'src/config/common/types/user.type';
 import { Public } from 'src/config/decorators/auth.decorator';
 import { User } from 'src/config/decorators/user.decorator';
@@ -28,6 +28,7 @@ export class AuthController {
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   @Post('login')
+  @ApiOperation({ summary: 'login to user account' })
   @ApiResponse({
     status: 200,
     description: 'Successful login',
@@ -57,6 +58,7 @@ export class AuthController {
 
   @Public()
   @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'create an user account' })
   @ApiResponse({
     status: 201,
     description: 'User signed up successfully',
@@ -93,6 +95,7 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'get the user information' })
   @ApiResponse({
     status: 200,
     description: 'Returns information about the authenticated user',
@@ -103,6 +106,7 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'update user profile' })
   @ApiResponse({ status: 200, description: 'Profile updated successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @Post('updateProfile')
@@ -114,6 +118,7 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'update user password' })
   @ApiResponse({ status: 200, description: 'password updated successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @Post('updatePassword')
@@ -125,6 +130,7 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Logout' })
   @ApiResponse({ status: 200, description: 'user logged out successfully' })
   @ApiResponse({
     status: 200,
@@ -136,6 +142,7 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Refresh user session' })
   @ApiResponse({
     status: 200,
     description: 'token refreshed successfully',

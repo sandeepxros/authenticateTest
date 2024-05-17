@@ -1,6 +1,7 @@
 import { Module, Global, DynamicModule } from '@nestjs/common';
 import { createClient } from 'redis';
 import { RedisService } from './redis.service';
+import { secrets } from 'src/config/secrets';
 
 @Global()
 @Module({})
@@ -10,7 +11,7 @@ export class RedisModule {
       provide: 'REDIS_CLIENT',
       useFactory: () => {
         const client = createClient({
-          url: process.env.REDIS_URL || 'redis://localhost:6379',
+          url: secrets.REDIS_URL,
         });
         client.connect();
         return client;
