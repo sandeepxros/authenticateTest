@@ -1,20 +1,20 @@
+import { ApiProperty } from '@nestjs/swagger';
 import * as bcrypt from 'bcrypt';
 import {
   AfterLoad,
-  BaseEntity,
   BeforeInsert,
   BeforeUpdate,
   Column,
   Entity,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn
 } from 'typeorm';
+import { Base } from './base.entity';
 import { Contact } from './contact.entity';
 import { SpamReport } from './spamReport.entity';
-import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
-export class User extends BaseEntity {
+export class User extends Base {
   private tempPassword: string;
 
   @PrimaryGeneratedColumn("uuid")

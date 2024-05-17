@@ -1,14 +1,14 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
-  BaseEntity,
   Column,
   Entity,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn
 } from 'typeorm';
+import { Base } from './base.entity';
 import { Contact } from './contact.entity';
 import { SpamReport } from './spamReport.entity';
-import { ApiProperty } from '@nestjs/swagger';
 
 export enum PhoneNumberLabel {
   home = 'home',
@@ -17,7 +17,7 @@ export enum PhoneNumberLabel {
 }
 
 @Entity()
-export class PhoneNumber extends BaseEntity {
+export class PhoneNumber extends Base {
   @PrimaryGeneratedColumn('uuid')
   @ApiProperty({
     example: '1c047f42-fed1-46a9-a860-e04618502911',
@@ -50,4 +50,7 @@ export class PhoneNumber extends BaseEntity {
     description: 'List of spam reports associated with this phone number',
   })
   spamReports: SpamReport[];
+
+  @Column({ default: false })
+  isRegisterd: boolean;
 }

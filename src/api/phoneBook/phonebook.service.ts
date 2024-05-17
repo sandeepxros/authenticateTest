@@ -106,6 +106,7 @@ export class PhoneBookService {
       .leftJoinAndSelect('phoneNumbers.spamReports', 'spamReports')
       .addSelect('contact.userId')
       .where('phoneNumbers.number LIKE :search', { search: `%${search}%` })
+      .orWhere('phoneNumbers.name LIKE :search', { search: `%${search}%` })
       .orderBy('CASE WHEN contact.userId = :userId THEN 0 ELSE 1 END', 'ASC')
       .setParameters({ search: `%${search}%`, userId });
     return paginate(query, options);

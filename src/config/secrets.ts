@@ -6,6 +6,6 @@ export const secrets = {
   PGPASSWORD: process.env.PGPASSWORD || 'postgres',
   PGDATABASE: process.env.PGDATABASE || 'postgres',
   AUTOSYNC_DB: process.env.AUTOSYNC_DB || 'FALSE',
-  DB_LOGGING: process.env.DB_LOGGING || 'FALSE',
+  DB_LOGGING: process.env.DB_LOGGING || 'TRUE',
   REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',
 };

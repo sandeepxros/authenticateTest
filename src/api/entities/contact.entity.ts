@@ -1,10 +1,11 @@
-import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { PhoneNumber } from './phoneNumber.entity';
 import { User } from './user.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Base } from './base.entity';
 
 @Entity()
-export class Contact extends BaseEntity {
+export class Contact extends Base {
     @PrimaryGeneratedColumn("uuid")
     @ApiProperty({ description: 'The unique identifier of the contact' })
     id: string;
