@@ -7,7 +7,7 @@ const config = {
   username: process.env.PGUSER || 'postgres',
   password: process.env.PGPASSWORD || 'postgres',
   database: process.env.PGDATABASE || 'local',
-  entities: ['src/entities/*.entity{.ts,.js}'],
+  entities: ['src/api/entities/*.entity{.ts,.js}'],
   migrations: ['src/migrations/*{.ts,.js}'],
   autoLoadEntities: true,
   synchronize: false, 

@@ -1,73 +1,50 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# Authenticate SPAM api test
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This project implments test questions asked by Authenticate for backend task
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
+Step to run the application 
+clone the application 
+add env file check the .env.example file 
+run db migration use pnpm run db:migrate 
 ## Installation
 
-```bash
-$ pnpm install
-```
-
-## Running the app
+Install my-project with npm
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+  pnpm install
+  npm i -g typeorm
+  pnpm run db:migrate
 ```
+    
+## Authors
 
-## Test
+- [@sandeepxros](https://github.com/sandeepxros)
 
-```bash
-# unit tests
-$ pnpm run test
 
-# e2e tests
-$ pnpm run test:e2e
+## Features
 
-# test coverage
-$ pnpm run test:cov
-```
+- Swagger integratied
+- Apis as per open api spec
+- JWT and refresh token implemented
+- Used Redis for local session
 
-## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## 🚀 About Me
+I'm a full stack developer...
 
-## Stay in touch
+As a seasoned MERN stack developer, I excel in crafting high-performance web applications that seamlessly blend robust backend functionality with intuitive user interfaces. With extensive experience in MongoDB, Express.js, React.js, and Node.js, I've honed my skills in architecting scalable solutions that meet both user needs and business objectives.
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+My journey in web development has been marked by a commitment to continuous learning and innovation. From designing RESTful APIs and optimizing database performance to implementing responsive frontend designs and ensuring seamless deployment, I bring a diverse skill set to the table.
 
-## License
+Throughout my career, I've had the opportunity to work on a variety of projects, each presenting unique challenges and opportunities for growth. Whether collaborating with cross-functional teams or leading development efforts from concept to deployment, I thrive in dynamic environments where I can leverage my technical expertise and problem-solving skills to deliver exceptional results.
 
-Nest is [MIT licensed](LICENSE).
+With a passion for staying current with emerging technologies and best practices, I'm excited about the opportunity to contribute my skills and experience to new and exciting projects, making a meaningful impact along the way.
+## 🔗 Links
+[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sandeepkumarsoni)
+
+
+
+## 🛠 Skills
+Javascript, Node JS, Typescript, Nest JS, Express JS, React JS, Next JS, SQL, MongoDB, AWS
+
