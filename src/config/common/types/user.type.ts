@@ -1,6 +1,7 @@
 export interface UserPayload {
-  uId: number;
+  uId: string;
   pId: string;
   firstName: string;
   LastName: string;
+  sessionId:string;
 }

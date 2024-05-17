@@ -4,7 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Post
+  Post,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserPayload } from 'src/config/common/types/user.type';
@@ -15,7 +15,9 @@ import { LoginDTO } from './dto/login.dto';
 import { SignUpDTO } from './dto/signup.dto';
 import { UpdatePasswordDTO } from './dto/updatePassword.dto';
 import { UpdateProfileDTO } from './dto/updateProfileDto';
- 
+import { LogoutDTO } from './dto/logout.dto';
+import { RefreshSessionDTO } from './dto/refreshSession.dto';
+
 @ApiBearerAuth()
 @ApiTags('Auth')
 @Controller('/auth')
@@ -29,7 +31,15 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'Successful login',
-    schema: { example: { token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' } },
+    schema: {
+      example: {
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        refreshToken: {
+          token: 'c847ded7-6c3d-4607-a8e5-.....',
+          expireAt: '2024-06-16T10:24:51.196Z',
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 400,
@@ -96,7 +106,10 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Profile updated successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @Post('updateProfile')
-  updateProfile(@Body() updateProfileDTO: UpdateProfileDTO, @User() user: UserPayload) {
+  updateProfile(
+    @Body() updateProfileDTO: UpdateProfileDTO,
+    @User() user: UserPayload,
+  ) {
     return this.service.updateProfile(updateProfileDTO, user.uId);
   }
 
@@ -104,7 +117,52 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'password updated successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @Post('updatePassword')
-  updatePassword(@Body() updatePasswordDTO: UpdatePasswordDTO,  @User() user: UserPayload) {
+  updatePassword(
+    @Body() updatePasswordDTO: UpdatePasswordDTO,
+    @User() user: UserPayload,
+  ) {
     return this.service.updatePassword(updatePasswordDTO, user.uId);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({ status: 200, description: 'user logged out successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'user logged out from all successfully',
+  })
+  @Post('logout')
+  logout(@Body() logoutDto: LogoutDTO, @User() user: UserPayload) {
+    return this.service.logout(user, logoutDto.fromAllDevice);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({
+    status: 200,
+    description: 'token refreshed successfully',
+    schema: {
+      example: {
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        refreshToken: {
+          token: 'c847ded7-6c3d-4607-a8e5-.....',
+          expireAt: '2024-06-16T10:24:51.196Z',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'session expired please login again',
+    schema: {
+      example: {
+        message: 'session expired please login again',
+      },
+    },
+  })
+  @Post('refreshSession')
+  refreshSession(
+    @Body() refreshSessionDTO: RefreshSessionDTO,
+    @User() user: UserPayload,
+  ) {
+    return this.service.refreshSession(refreshSessionDTO.refreshToken, user);
   }
 }

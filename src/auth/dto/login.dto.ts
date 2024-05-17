@@ -12,4 +12,8 @@ export class LoginDTO {
   @ApiProperty({ description: 'The password of the user.' })
   @IsString()
   password: string;
+
+  @ApiProperty({ description: 'Device Token' })
+  @IsString()
+  deviceToken: string;
 }
