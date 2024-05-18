@@ -93,7 +93,7 @@ export class PhoneBookController {
     description: 'The phone number has been marked as spam.',
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  async markAsSpam(
+  markAsSpam(
     @Body() createSpamReportDto: CreateSpamReportDto,
     @User() user: UserPayload,
   ) {
@@ -131,10 +131,7 @@ export class PhoneBookController {
     type: [Contact],
   })
   @ApiResponse({ status: 400, description: 'Invalid query parameter' })
-  async searchContacts(
-    @Query('query') query: string,
-    @User() user?: UserPayload,
-  ) {
+  searchContacts(@Query('query') query: string, @User() user?: UserPayload) {
     return this.service.searchContacts(query, user.uId);
   }
 
@@ -147,7 +144,7 @@ export class PhoneBookController {
     description: 'Paginated list of contacts',
     type: Contact,
   })
-  async getContactInfo(
+  getContactInfo(
     @Query('contactId') contactId: string,
     @User() user?: UserPayload,
   ) {

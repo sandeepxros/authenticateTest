@@ -4,14 +4,15 @@ import {
   IsOptional,
   IsString,
   MaxLength,
-  MinLength
+  MinLength,
 } from 'class-validator';
 
 export class UpdateProfileDTO {
   @ApiProperty({
     description:
-      'First name must be a string with a minimum length of 3 characters and a maximum length of 25 characters.',
+      'The first name of the user. Must be a string with a minimum length of 3 characters and a maximum length of 25 characters.',
     required: false,
+    example: 'John',
   })
   @IsString()
   @MinLength(3)
@@ -21,8 +22,9 @@ export class UpdateProfileDTO {
 
   @ApiProperty({
     description:
-      'Last name must be a string with a minimum length of 3 characters and a maximum length of 25 characters.',
+      'The last name of the user. Must be a string with a minimum length of 3 characters and a maximum length of 25 characters.',
     required: false,
+    example: 'Doe',
   })
   @IsString()
   @MinLength(3)
@@ -32,7 +34,9 @@ export class UpdateProfileDTO {
 
   @ApiProperty({
     required: false,
-    description: 'Email must be a valid email address. This field is optional.',
+    description:
+      'The email address of the user. Must be a valid email address. This field is optional.',
+    example: 'john.doe@example.com',
   })
   @IsEmail()
   @IsOptional()

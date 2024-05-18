@@ -12,7 +12,10 @@ import {
 export class SignUpDTO {
   @ApiProperty({
     description:
-      'First name must be a string with a minimum length of 3 characters and a maximum length of 25 characters.',
+      'The first name of the user. Must be a string with a minimum length of 3 characters and a maximum length of 25 characters.',
+    example: 'John',
+    minLength: 3,
+    maxLength: 25,
   })
   @IsString()
   @MinLength(3, { message: 'First name must be at least 3 characters long.' })
@@ -21,7 +24,10 @@ export class SignUpDTO {
 
   @ApiProperty({
     description:
-      'Last name must be a string with a minimum length of 3 characters and a maximum length of 25 characters.',
+      'The last name of the user. Must be a string with a minimum length of 3 characters and a maximum length of 25 characters.',
+    example: 'Doe',
+    minLength: 3,
+    maxLength: 25,
   })
   @IsString()
   @MinLength(3, { message: 'Last name must be at least 3 characters long.' })
@@ -31,13 +37,16 @@ export class SignUpDTO {
   @ApiProperty({
     description:
       'A valid phone number including the country code, with no spaces or special characters. Example: +1234567890.',
+    example: '+1234567890',
   })
   @IsPhoneNumber()
   phoneNumber: string;
 
   @ApiProperty({
+    description:
+      'The email address of the user. Must be a valid email address. This field is optional.',
     required: false,
-    description: 'Email must be a valid email address. This field is optional.',
+    example: 'john.doe@example.com',
   })
   @IsEmail()
   @IsOptional()
@@ -45,7 +54,8 @@ export class SignUpDTO {
 
   @ApiProperty({
     description:
-      'Password must be at least 6 characters long, including at least one lowercase letter, one uppercase letter, one number, and one special symbol.',
+      'The password of the user. Must be at least 6 characters long, including at least one lowercase letter, one uppercase letter, one number, and one special symbol.',
+    example: 'Password123!',
   })
   @IsStrongPassword(
     {

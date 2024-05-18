@@ -17,7 +17,7 @@ import { UpdatePasswordDTO } from './dto/updatePassword.dto';
 import { UpdateProfileDTO } from './dto/updateProfileDto';
 import { LogoutDTO } from './dto/logout.dto';
 import { RefreshSessionDTO } from './dto/refreshSession.dto';
-
+import {User as UserEntity} from "../entities/user.entity"
 @ApiBearerAuth()
 @ApiTags('Auth')
 @Controller('/auth')
@@ -99,6 +99,7 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'Returns information about the authenticated user',
+    type: UserEntity
   })
   @Get('whoAmI')
   whoAmI(@User() user: UserPayload) {

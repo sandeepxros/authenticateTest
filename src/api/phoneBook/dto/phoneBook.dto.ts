@@ -88,7 +88,7 @@ export class CreateSpamReportDto {
 
   @ApiProperty({
     description: 'comment releted to marking spam',
-    example: '+123456',
+    example: 'comment releted to marking spam',
   })
   @IsString()
   @IsOptional()

@@ -5,6 +5,7 @@ export class LoginDTO {
   @ApiProperty({
     description:
       'A valid phone number including the country code, with no spaces or special characters. Example: +1234567890.',
+    example: '+1234567890',
   })
   @IsPhoneNumber()
   phoneNumber: string;
@@ -13,7 +14,10 @@ export class LoginDTO {
   @IsString()
   password: string;
 
-  @ApiProperty({ description: 'Device Token' })
+  @ApiProperty({
+    description: 'The device token used for push notifications.',
+    example: 'abc123def456',
+  })
   @IsString()
   deviceToken: string;
 }

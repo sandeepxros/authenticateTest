@@ -4,7 +4,8 @@ import { IsBoolean, IsOptional } from 'class-validator';
 export class LogoutDTO {
   @ApiProperty({
     description:
-      'A valid boolean value set to true if want to logout from all devices',
+      'A boolean value indicating whether to logout from all devices. Set to true to logout from all devices.',
+    example: true,
   })
   @IsBoolean()
   @IsOptional()

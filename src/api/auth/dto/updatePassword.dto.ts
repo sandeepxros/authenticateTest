@@ -4,7 +4,8 @@ import { IsBoolean, IsOptional, IsStrongPassword, isBoolean } from "class-valida
 export class UpdatePasswordDTO {
   @ApiProperty({
     description:
-      'Password must be at least 6 characters long, including at least one lowercase letter, one uppercase letter, one number, and one special symbol.',
+      'The new password of the user. Must be at least 6 characters long, including at least one lowercase letter, one uppercase letter, one number, and one special symbol.',
+    example: 'NewPassword123!',
   })
   @IsStrongPassword({
     minLength: 6,
@@ -18,7 +19,8 @@ export class UpdatePasswordDTO {
 
   @ApiProperty({
     description:
-      'True if user wants to logout from everywhere after updating the password',
+      'Set to true if the user wants to logout from all sessions after updating the password.',
+    example: true,
   })
   @IsBoolean()
   @IsOptional()
