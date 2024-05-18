@@ -239,6 +239,7 @@ export class AuthService {
       firstName: user.userProfile.firstName,
       lastName: user.userProfile.lastName,
       sessionId,
+      pId: user.phoneId
     });
 
     const refreshToken = this.createRefreshToken();

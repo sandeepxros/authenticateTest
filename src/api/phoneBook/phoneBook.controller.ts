@@ -151,6 +151,6 @@ export class PhoneBookController {
     @Query('contactId') contactId: string,
     @User() user?: UserPayload,
   ) {
-    return this.service.getContactInfo(contactId, user.uId);
+    return this.service.getContactInfo(contactId, user.pId);
   }
 }

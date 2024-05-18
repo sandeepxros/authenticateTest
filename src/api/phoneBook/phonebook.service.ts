@@ -1,14 +1,14 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { isUUID } from 'class-validator';
 import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
 import { PhoneNumberService } from 'src/config/common/services/utility/phoneNumber.service';
-import { Like, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Contact } from '../entities/contact.entity';
 import { PhoneNumber } from '../entities/phoneNumber.entity';
 import { SpamReport } from '../entities/spamReport.entity';
 import { User } from '../entities/user.entity';
 import { CreateContactDto } from './dto/phoneBook.dto';
-import { isUUID } from 'class-validator';
 
 @Injectable()
 export class PhoneBookService {
@@ -83,39 +83,24 @@ export class PhoneBookService {
   }
 
   async markAsSpam(userId: string, phoneNumber: string, comment: string) {
-    /*
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new Error('User not found');
     }
     const isPhoneNumberAvailable = await this.phoneNumberRepository.findOne({
-      where: { number: phoneNumber },
+      where: { ...this.phoneNumberService.extractCountryDetails(phoneNumber) },
     });
 
     if (!isPhoneNumberAvailable) {
       throw new BadRequestException('Phone number not found');
     }
     const spamReport = this.spamReportRepository.create();
-    spamReport.user = user;
+    spamReport.reportedBy = user;
     spamReport.comment = comment;
     spamReport.phoneNumber = isPhoneNumberAvailable;
     spamReport.save();
-    */
-    return { message: 'The phone number has been marked as spam.' };
-  }
 
-  async getSpamReports(number: string) {
-    /*
-    const phoneNumber = await this.phoneNumberRepository.findOne({
-      where: { number },
-      relations: ['spamReports', 'spamReports.user'],
-    });
-    if (!phoneNumber) {
-      throw new Error('Phone number not found');
-    }
-  
-    return phoneNumber.spamReports;
-    */
+    return { message: 'The phone number has been marked as spam.' };
   }
 
   async searchContacts(search: string, userId: string) {
@@ -137,19 +122,30 @@ export class PhoneBookService {
     }
   }
 
-  async getContactInfo(contactId: string, userId: string) {
-
-    if(!isUUID(contactId)){
-      throw new BadRequestException("contact ID should be valid")
+  async getContactInfo(contactId: string, phoneNumber: string) {
+    if (!isUUID(contactId)) {
+      throw new BadRequestException('contact ID should be valid');
     }
     const contactInfo = await this.contactRepository.findOne({
       where: { id: contactId },
-      relations: ['phoneNumbers', 'phoneNumbers.spamReports', 'addedBy'],
+      relations: [
+        'phoneNumbers',
+        'phoneNumbers.spamReports',
+        'addedBy',
+        'user.contacts',
+        'user.contacts.phoneNumbers',
+      ],
     });
-    if (contactInfo.addedBy.id !== userId && !contactInfo.isRegistered) {
+    if (
+      !contactInfo?.user?.contacts.find(
+        (d) => d?.phoneNumbers?.phoneNumber === phoneNumber,
+      ) &&
+      contactInfo.isRegistered
+    ) {
       delete contactInfo.email;
     }
     delete contactInfo.addedBy;
+    delete contactInfo.user;
     return contactInfo;
   }
 }
