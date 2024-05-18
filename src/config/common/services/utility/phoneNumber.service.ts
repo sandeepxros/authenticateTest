@@ -10,6 +10,7 @@ export class PhoneNumberService {
     countryCode: string;
     countryName: string;
     regionCode: string;
+    phoneNumber: string;
   } {
     try {
       const parsedNumber = this.phoneUtil.parse(phoneNumber);
@@ -20,6 +21,9 @@ export class PhoneNumberService {
         countryCode,
         countryName: countryName?.name,
         regionCode,
+        phoneNumber: this.phoneUtil
+          .format(parsedNumber, libphonenumber.PhoneNumberFormat.NATIONAL)
+          .replace(/\D/g, ''),
       };
     } catch (error) {
       throw new Error(`Invalid phone number: ${error.message}`);

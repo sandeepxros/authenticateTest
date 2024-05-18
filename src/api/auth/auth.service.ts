@@ -10,17 +10,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { RedisService } from 'src/config/common/services/redis/redis.service';
+import { PhoneNumberService } from 'src/config/common/services/utility/phoneNumber.service';
 import { Session } from 'src/config/common/types/session.type';
 import { UserPayload } from 'src/config/common/types/user.type';
 import { Repository } from 'typeorm';
+import { Contact } from '../entities/contact.entity';
+import { PhoneNumber, PhoneNumberLabel } from '../entities/phoneNumber.entity';
+import { User } from '../entities/user.entity';
+import { PhoneBookService } from '../phoneBook/phonebook.service';
 import { LoginDTO } from './dto/login.dto';
 import { SignUpDTO } from './dto/signup.dto';
 import { UpdatePasswordDTO } from './dto/updatePassword.dto';
 import { UpdateProfileDTO } from './dto/updateProfileDto';
-import { User } from '../entities/user.entity';
-import { PhoneBookService } from '../phoneBook/phonebook.service';
-import { PhoneNumberService } from 'src/config/common/services/utility/phoneNumber.service';
-import { PhoneNumberLabel } from '../entities/phoneNumber.entity';
 
 type SessionID = string;
 @Injectable()
@@ -32,12 +33,26 @@ export class AuthService {
     private readonly redis: RedisService,
     private readonly phoneNumberService: PhoneNumberService,
     private readonly phonbookService: PhoneBookService,
+    @InjectRepository(Contact)
+    private contactRepository: Repository<Contact>,
+    @InjectRepository(PhoneNumber)
+    private phoneNumberRepository: Repository<PhoneNumber>,
   ) {}
 
-  async login(loginDTO: LoginDTO) {
-    const user = await this.repository.findOne({
-      where: { phoneNumber: loginDTO.phoneNumber },
+  getUserByPhoneId(nonParsePhoneNumber) {
+    const phoneNumberMetaData =
+      this.phoneNumberService.extractCountryDetails(nonParsePhoneNumber);
+
+    return this.repository.findOne({
+      where: {
+        phoneId: phoneNumberMetaData.phoneNumber,
+      },
+      relations: ['userProfile', 'userProfile.phoneNumbers'],
     });
+  }
+
+  async login(loginDTO: LoginDTO) {
+    const user = await this.getUserByPhoneId(loginDTO.phoneNumber);
 
     if (!user) throw new BadRequestException('user is not registerd');
 
@@ -55,52 +70,72 @@ export class AuthService {
   }
 
   async signUp(signUpDTO: SignUpDTO) {
-    const isPhoneNumberAlreadyRegisterd = await this.repository.count({
-      where: { phoneNumber: signUpDTO.phoneNumber },
-    });
-
-    if (isPhoneNumberAlreadyRegisterd)
-      throw new BadRequestException('User Already Registerd, Please login');
-
     const phoneNumberMetaData = this.phoneNumberService.extractCountryDetails(
       signUpDTO.phoneNumber,
     );
 
-    const user = this.repository.create(signUpDTO);
-    user.countryCode = phoneNumberMetaData.countryCode;
-    user.countryName = phoneNumberMetaData.countryName;
-    user.regionCode = phoneNumberMetaData.regionCode;
+    const countryCode = phoneNumberMetaData.countryCode;
+    const countryName = phoneNumberMetaData.countryName;
+    const regionCode = phoneNumberMetaData.regionCode;
+    const actualNumber = phoneNumberMetaData.phoneNumber;
 
+    const phoneNumber = await this.getUserByPhoneId(signUpDTO.phoneNumber);
+
+    if (phoneNumber)
+      throw new BadRequestException('User Already Registerd, Please login');
+
+    const user = this.repository.create();
+    user.password = signUpDTO.password;
+    user.phoneId = actualNumber;
     await user.save();
 
-    this.phonbookService.addContact(
-      user.id,
-      {
-        name: `${user.firstName} ${user.lastName}`,
-        email: user.email,
-        phoneNumbers: [
-          {
-            label: PhoneNumberLabel.mobile,
-            number: user.phoneNumber,
-          },
-        ],
-      },
-      true,
-    );
+    const contact = this.contactRepository.create();
+    contact.addedBy = user;
+    contact.firstName = signUpDTO.firstName;
+    contact.lastName = signUpDTO.lastName;
+    contact.isRegistered = true;
+    contact.user = user;
+    // [];
+
+    let phoneNumberToAdd = await this.phoneNumberRepository.findOne({
+      where: { phoneNumber: actualNumber },
+    });
+
+    if (!phoneNumberToAdd) {
+      phoneNumberToAdd = this.phoneNumberRepository.create();
+      phoneNumberToAdd.regionCode = regionCode;
+      phoneNumberToAdd.countryCode = countryCode;
+      phoneNumberToAdd.countryName = countryName;
+      phoneNumberToAdd.phoneNumber = actualNumber;
+      phoneNumberToAdd.label = PhoneNumberLabel.primary;
+      await phoneNumberToAdd.save();
+    }
+    contact.phoneNumbers =  phoneNumberToAdd
+    console.log(phoneNumberToAdd, "phoneNumberToAdd")
+
+    // contact.phoneNumbers.push(phoneNumberToAdd);
+
+    console.log(contact, "contactcontact")
+
+    await contact.save()
 
     return { message: 'User signed up successfully' };
   }
 
   async whoAmI(id: string) {
-    const user = await this.repository.findOneBy({ id });
+    const user = await this.repository.findOne({
+      where: { id },
+      relations: ['userProfile', 'userProfile.phoneNumbers'],
+    });
     delete user.password;
     delete user['tempPassword'];
     return user;
   }
 
   async updateProfile(updateProfileDTO: UpdateProfileDTO, id: string) {
-    const isUpdated = (await this.repository.update({ id }, updateProfileDTO))
-      .affected;
+    const isUpdated = (
+      await this.contactRepository.update({ user: { id } }, updateProfileDTO)
+    ).affected;
     return {
       message: isUpdated
         ? 'Profile updated successfully'
@@ -116,6 +151,10 @@ export class AuthService {
     user.password = updatePasswordDTO.password;
 
     await user.save();
+
+    if (updatePasswordDTO.removeAllSessions) {
+      this.removeAllSession(id);
+    }
 
     return {
       message: 'password updated successfully',
@@ -197,9 +236,8 @@ export class AuthService {
 
     const token = await this.jwtService.signAsync({
       uId: user.id,
-      pId: user.phoneNumber,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      firstName: user.userProfile.firstName,
+      lastName: user.userProfile.lastName,
       sessionId,
     });
 
@@ -207,12 +245,12 @@ export class AuthService {
 
     const session: Session = {
       deviceToken: loginDTO.deviceToken,
-      email: user.email,
+      email: user.userProfile.email,
       sessionId,
       refreshToken,
       userId: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      firstName: user.userProfile.firstName,
+      lastName: user.userProfile.lastName,
       blocked: false,
     };
 

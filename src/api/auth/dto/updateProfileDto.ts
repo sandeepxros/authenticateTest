@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsOptional,
-  IsPhoneNumber,
   IsString,
   MaxLength,
   MinLength
@@ -30,15 +29,6 @@ export class UpdateProfileDTO {
   @MaxLength(25)
   @IsOptional()
   lastName: string;
-
-  @ApiProperty({
-    description:
-      'A valid phone number including the country code, with no spaces or special characters. Example: +1234567890.',
-    required: false,
-  })
-  @IsPhoneNumber()
-  @IsOptional()
-  phoneNumber: string;
 
   @ApiProperty({
     required: false,

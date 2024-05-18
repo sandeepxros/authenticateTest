@@ -34,11 +34,19 @@ export class CreatePhoneNumberDto {
 export class CreateContactDto {
   @ApiProperty({
     description: 'The name of the contact',
-    example: 'John Doe',
+    example: 'Johe',
   })
   @IsString()
-  @IsNotEmpty()
-  name: string;
+  @IsOptional()
+  firstName: string;
+
+  @ApiProperty({
+    description: 'The name of the contact',
+    example: 'Doe',
+  })
+  @IsString()
+  @IsOptional()
+  lastName: string;
 
   @ApiProperty({
     description: 'The email of the contact',
@@ -50,13 +58,11 @@ export class CreateContactDto {
 
   @ApiProperty({
     description: 'A list of phone numbers associated with the contact',
-    type: () => [CreatePhoneNumberDto],
+    type: () => CreatePhoneNumberDto,
   })
-  @IsArray()
-  @ArrayNotEmpty()
-  @ValidateNested({ each: true })
+  @ValidateNested()
   @Type(() => CreatePhoneNumberDto)
-  phoneNumbers: CreatePhoneNumberDto[];
+  phoneNumber: CreatePhoneNumberDto;
 }
 
 export class CreateMultipleContactsDto {

@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsStrongPassword } from "class-validator";
+import { IsBoolean, IsOptional, IsStrongPassword, isBoolean } from "class-validator";
 
 export class UpdatePasswordDTO {
   @ApiProperty({
@@ -14,4 +14,13 @@ export class UpdatePasswordDTO {
     minUppercase: 1,
   })
   password: string;
+
+
+  @ApiProperty({
+    description:
+      'True if user wants to logout from everywhere after updating the password',
+  })
+  @IsBoolean()
+  @IsOptional()
+  removeAllSessions: boolean;
 }

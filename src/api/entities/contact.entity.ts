@@ -1,14 +1,13 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   Column,
   Entity,
   ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn
 } from 'typeorm';
+import { Base } from './base.entity';
 import { PhoneNumber } from './phoneNumber.entity';
 import { User } from './user.entity';
-import { ApiProperty } from '@nestjs/swagger';
-import { Base } from './base.entity';
 
 @Entity()
 export class Contact extends Base {
@@ -16,30 +15,27 @@ export class Contact extends Base {
   @ApiProperty({ description: 'The unique identifier of the contact' })
   id: string;
 
-  @Column()
-  @ApiProperty({ description: 'The name of the contact' })
-  name: string;
+  @Column({ nullable: true })
+  @ApiProperty({ description: 'The first name of the contact' })
+  firstName?: string;
 
-  @Column({nullable:true})
+  @Column({ nullable: true })
+  @ApiProperty({ description: 'The last name of the contact' })
+  lastName?: string;
+
+  @Column({ nullable: true })
   @ApiProperty({ description: 'The email of the contact' })
   email?: string;
 
-  @ManyToOne(() => User, (user) => user.contacts)
-  @ApiProperty({
-    type: () => User,
-    description: 'The user added this contact',
-  })
-  addedBy: User;
-
-  @OneToMany(() => PhoneNumber, (phoneNumber) => phoneNumber.contact)
-  @ApiProperty({
-    type: () => [PhoneNumber],
-    description: 'List of phone numbers associated with this contact',
-  })
-  phoneNumbers: PhoneNumber[];
-
   @Column({ default: false })
   isRegistered: boolean;
+
+  @ManyToOne(() => PhoneNumber, (phoneNumber) => phoneNumber.contact)
+  @ApiProperty({
+    type: () => PhoneNumber,
+    description: 'phone number associated with this contact',
+  })
+  phoneNumbers: PhoneNumber;
 
   @ManyToOne(() => User, (user) => user.id, { nullable: true })
   @ApiProperty({
@@ -47,4 +43,11 @@ export class Contact extends Base {
     description: 'The account of this user',
   })
   user: User;
+
+  @ManyToOne(() => User, (user) => user.contacts)
+  @ApiProperty({
+    type: () => User,
+    description: 'The user added this contact',
+  })
+  addedBy: User;
 }

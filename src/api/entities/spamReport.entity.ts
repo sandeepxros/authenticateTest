@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-    Column,
-    Entity,
-    ManyToOne,
-    PrimaryGeneratedColumn
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn
 } from 'typeorm';
 import { Base } from './base.entity';
 import { PhoneNumber } from './phoneNumber.entity';
@@ -23,7 +23,7 @@ export class SpamReport extends Base {
     type: () => User,
     description: 'The user who reported the spam',
   })
-  user: User;
+  reportedBy: User;
 
   @ManyToOne(() => PhoneNumber, (phoneNumber) => phoneNumber.spamReports)
   @ApiProperty({
