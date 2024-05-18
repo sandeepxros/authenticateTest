@@ -25,4 +25,12 @@ export class PhoneNumberService {
       throw new Error(`Invalid phone number: ${error.message}`);
     }
   }
+
+  isValidNumber(phoneNumber: string) {
+    try {
+      return this.phoneUtil.isValidNumber(this.phoneUtil.parse(phoneNumber));
+    } catch {
+      return false;
+    }
+  }
 }

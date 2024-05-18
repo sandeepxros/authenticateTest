@@ -17,8 +17,10 @@ import { LoginDTO } from './dto/login.dto';
 import { SignUpDTO } from './dto/signup.dto';
 import { UpdatePasswordDTO } from './dto/updatePassword.dto';
 import { UpdateProfileDTO } from './dto/updateProfileDto';
-import { PhoneNumberService } from 'src/config/common/services/utility/phoneNumber.service';
 import { User } from '../entities/user.entity';
+import { PhoneBookService } from '../phoneBook/phonebook.service';
+import { PhoneNumberService } from 'src/config/common/services/utility/phoneNumber.service';
+import { PhoneNumberLabel } from '../entities/phoneNumber.entity';
 
 type SessionID = string;
 @Injectable()
@@ -29,6 +31,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly redis: RedisService,
     private readonly phoneNumberService: PhoneNumberService,
+    private readonly phonbookService: PhoneBookService,
   ) {}
 
   async login(loginDTO: LoginDTO) {
@@ -69,6 +72,21 @@ export class AuthService {
     user.regionCode = phoneNumberMetaData.regionCode;
 
     await user.save();
+
+    this.phonbookService.addContact(
+      user.id,
+      {
+        name: `${user.firstName} ${user.lastName}`,
+        email: user.email,
+        phoneNumbers: [
+          {
+            label: PhoneNumberLabel.mobile,
+            number: user.phoneNumber,
+          },
+        ],
+      },
+      true,
+    );
 
     return { message: 'User signed up successfully' };
   }

@@ -41,6 +41,14 @@ export class CreateContactDto {
   name: string;
 
   @ApiProperty({
+    description: 'The email of the contact',
+    example: 'abc@xyz.com',
+  })
+  @IsString()
+  @IsOptional()
+  email: string;
+
+  @ApiProperty({
     description: 'A list of phone numbers associated with the contact',
     type: () => [CreatePhoneNumberDto],
   })

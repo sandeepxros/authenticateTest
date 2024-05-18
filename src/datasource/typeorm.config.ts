@@ -15,6 +15,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       entities: [__dirname + '/../**/*.entity{.ts,.js}'],
       synchronize: secrets.AUTOSYNC_DB === 'TRUE',
       logging: secrets.DB_LOGGING==="TRUE",
+      autoLoadEntities:true,
     };
   }
 }

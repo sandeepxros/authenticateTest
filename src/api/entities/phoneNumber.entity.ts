@@ -4,7 +4,7 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Base } from './base.entity';
 import { Contact } from './contact.entity';
@@ -50,7 +50,4 @@ export class PhoneNumber extends Base {
     description: 'List of spam reports associated with this phone number',
   })
   spamReports: SpamReport[];
-
-  @Column({ default: false })
-  isRegisterd: boolean;
 }

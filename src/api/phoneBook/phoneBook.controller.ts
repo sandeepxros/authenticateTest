@@ -128,19 +128,29 @@ export class PhoneBookController {
   @ApiResponse({
     status: 200,
     description: 'Paginated list of contacts',
-    type: Pagination<Contact>,
+    type: [Contact],
   })
   @ApiResponse({ status: 400, description: 'Invalid query parameter' })
   async searchContacts(
     @Query('query') query: string,
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
     @User() user?: UserPayload,
   ) {
-    const options: IPaginationOptions = {
-      page,
-      limit,
-    };
-    return this.service.searchContacts(query, options, user.uId);
+    return this.service.searchContacts(query, user.uId);
+  }
+
+  @Get('contactInfo')
+  @ApiOperation({
+    summary: 'Search contacts by name or phone number with pagination',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Paginated list of contacts',
+    type: Contact,
+  })
+  async getContactInfo(
+    @Query('contactId') contactId: string,
+    @User() user?: UserPayload,
+  ) {
+    return this.service.getContactInfo(contactId, user.uId);
   }
 }

@@ -7,6 +7,7 @@ import { PhoneNumber } from '../entities/phoneNumber.entity';
 import { SpamReport } from '../entities/spamReport.entity';
 import { User } from '../entities/user.entity';
 import { CreateContactDto } from './dto/phoneBook.dto';
+import { PhoneNumberService } from 'src/config/common/services/utility/phoneNumber.service';
 
 @Injectable()
 export class PhoneBookService {
@@ -19,9 +20,14 @@ export class PhoneBookService {
     private phoneNumberRepository: Repository<PhoneNumber>,
     @InjectRepository(SpamReport)
     private spamReportRepository: Repository<SpamReport>,
+    private phoneNumberService: PhoneNumberService,
   ) {}
 
-  async addContact(userId: string, createContactDto: CreateContactDto) {
+  async addContact(
+    userId: string,
+    createContactDto: CreateContactDto,
+    isRegistered = false,
+  ) {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new Error('User not found');
@@ -29,6 +35,9 @@ export class PhoneBookService {
 
     const contact = this.contactRepository.create({
       name: createContactDto.name,
+      addedBy: user,
+      email: createContactDto.email,
+      isRegistered,
       user,
     });
     await this.contactRepository.save(contact);
@@ -55,13 +64,13 @@ export class PhoneBookService {
   async addMultipleContacts(
     userId: string,
     createContactDtos: CreateContactDto[],
-  ): Promise<Contact[]> {
+  ) {
     const contacts = [];
     for (const createContactDto of createContactDtos) {
-      const contact = await this.addContact(userId, createContactDto);
+      const contact = this.addContact(userId, createContactDto);
       contacts.push(contact);
     }
-    return contacts;
+    return Promise.allSettled(contacts);
   }
 
   async markAsSpam(userId: string, phoneNumber: string, comment: string) {
@@ -95,20 +104,42 @@ export class PhoneBookService {
     return phoneNumber.spamReports;
   }
 
-  async searchContacts(
-    search: string,
-    options: IPaginationOptions,
-    userId: string,
-  ) {
-    const query = this.contactRepository
+  async searchContacts(search: string, userId: string) {
+    const contactResult = await this.contactRepository
       .createQueryBuilder('contact')
       .leftJoinAndSelect('contact.phoneNumbers', 'phoneNumbers')
       .leftJoinAndSelect('phoneNumbers.spamReports', 'spamReports')
       .addSelect('contact.userId')
-      .where('phoneNumbers.number LIKE :search', { search: `%${search}%` })
-      .orWhere('phoneNumbers.name LIKE :search', { search: `%${search}%` })
+      .addSelect('contact.email')
+      .where(
+        '(phoneNumbers.number LIKE :search OR contact.name ILIKE :search)',
+        { search: `%${search}%` },
+      )
       .orderBy('CASE WHEN contact.userId = :userId THEN 0 ELSE 1 END', 'ASC')
-      .setParameters({ search: `%${search}%`, userId });
-    return paginate(query, options);
+      .addOrderBy('contact.isRegistered', 'DESC')
+      .setParameters({ search: `%${search}%`, userId })
+      .getMany();
+
+    const isValidPhoneNumber = this.phoneNumberService.isValidNumber(search);
+
+    if (isValidPhoneNumber) {
+      return contactResult.filter((r) => r.isRegistered).length
+        ? contactResult.filter((r) => r.isRegistered)
+        : contactResult;
+    } else {
+      return contactResult;
+    }
+  }
+
+  async getContactInfo(contactId: string, userId: string) {
+    const contactInfo = await this.contactRepository.findOne({
+      where: { id: contactId },
+      relations: ['phoneNumbers', 'phoneNumbers.spamReports', 'addedBy'],
+    });
+    if (contactInfo.addedBy.id !== userId && !contactInfo.isRegistered) {
+      delete contactInfo.email;
+    }
+    delete contactInfo.addedBy;
+    return contactInfo;
   }
 }

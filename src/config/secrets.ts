@@ -4,8 +4,8 @@ export const secrets = {
   PGPORT: process.env.PGPORT || 5432,
   PGUSER: process.env.PGUSER || 'postgres',
   PGPASSWORD: process.env.PGPASSWORD || 'postgres',
-  PGDATABASE: process.env.PGDATABASE || 'postgres',
-  AUTOSYNC_DB: process.env.AUTOSYNC_DB || 'FALSE',
+  PGDATABASE: process.env.PGDATABASE || 'local',
+  AUTOSYNC_DB: process.env.AUTOSYNC_DB || 'TRUE',
   DB_LOGGING: process.env.DB_LOGGING || 'TRUE',
   REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',
 };
