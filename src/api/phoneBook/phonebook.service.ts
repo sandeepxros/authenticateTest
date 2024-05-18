@@ -40,7 +40,7 @@ export class PhoneBookService {
       phoneNumber: actualNumber.phoneNumber,
     });
     if (!phoneNumber) {
-      this.phoneNumberRepository.create({
+      phoneNumber = this.phoneNumberRepository.create({
         ...createContactDto.phoneNumber,
         ...actualNumber,
       });
@@ -104,16 +104,26 @@ export class PhoneBookService {
   }
 
   async searchContacts(search: string, userId: string) {
+    const isValidPhoneNumber = this.phoneNumberService.isValidNumber(search);
+    let localeNumber;
+    if (isValidPhoneNumber)
+      localeNumber =
+        this.phoneNumberService.extractCountryDetails(search).phoneNumber;
+
     const contactResult = await this.contactRepository
       .createQueryBuilder('contact')
       .leftJoinAndSelect('contact.phoneNumbers', 'phoneNumbers')
-      .where('phoneNumbers.phoneNumber LIKE :search', { search: `%${search}%` })
+      .where(
+        'phoneNumbers.phoneNumber LIKE :search or phoneNumbers.phoneNumber LIKE :localeNumber',
+        { search: `%${search}%`, localeNumber: `%${localeNumber}%` },
+      )
       .orWhere('contact.firstName ILIKE :search', { search: `%${search}%` })
       .orWhere('contact.lastName ILIKE :search', { search: `%${search}%` })
       .getMany();
 
-    const isValidPhoneNumber = this.phoneNumberService.isValidNumber(search);
-
+    contactResult.forEach((d) => {
+      delete d.email;
+    });
     if (isValidPhoneNumber) {
       const result = contactResult.filter((r) => r.isRegistered);
       return result.length ? result : contactResult;
@@ -140,7 +150,7 @@ export class PhoneBookService {
       !contactInfo?.user?.contacts.find(
         (d) => d?.phoneNumbers?.phoneNumber === phoneNumber,
       ) &&
-      contactInfo.isRegistered
+      !contactInfo.isRegistered
     ) {
       delete contactInfo.email;
     }

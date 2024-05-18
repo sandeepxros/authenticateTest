@@ -110,14 +110,14 @@ export class AuthService {
       phoneNumberToAdd.label = PhoneNumberLabel.primary;
       await phoneNumberToAdd.save();
     }
-    contact.phoneNumbers =  phoneNumberToAdd
-    console.log(phoneNumberToAdd, "phoneNumberToAdd")
+    contact.phoneNumbers = phoneNumberToAdd;
+    console.log(phoneNumberToAdd, 'phoneNumberToAdd');
 
     // contact.phoneNumbers.push(phoneNumberToAdd);
 
-    console.log(contact, "contactcontact")
+    console.log(contact, 'contactcontact');
 
-    await contact.save()
+    await contact.save();
 
     return { message: 'User signed up successfully' };
   }
@@ -179,7 +179,10 @@ export class AuthService {
       else
         return this.generateSession(
           { deviceToken: session.deviceToken },
-          await this.repository.findOneBy({ id: user.uId }),
+          await this.repository.findOne({
+            where: { id: user.uId },
+            relations: ['userProfile', 'userProfile.phoneNumbers'],
+          }),
           session.sessionId,
         );
     } catch (e) {
@@ -239,7 +242,7 @@ export class AuthService {
       firstName: user.userProfile.firstName,
       lastName: user.userProfile.lastName,
       sessionId,
-      pId: user.phoneId
+      pId: user.phoneId,
     });
 
     const refreshToken = this.createRefreshToken();
