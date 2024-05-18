@@ -6,7 +6,7 @@ const config = {
   port: process.env.PGPORT || 5432,
   username: process.env.PGUSER || 'postgres',
   password: process.env.PGPASSWORD || 'postgres',
-  database: process.env.PGDATABASE || 'local',
+  database: process.env.PGDATABASE || 'local22',
   entities: ['src/api/entities/*.entity{.ts,.js}'],
   migrations: ['src/migrations/*{.ts,.js}'],
   autoLoadEntities: true,
