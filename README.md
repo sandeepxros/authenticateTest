@@ -10,6 +10,8 @@ run db migration use pnpm run db:migrate
 ## Installation
 
 Install my-project with npm
+- Make sure all envs are given properly follow .env.example
+- Redis server must be up and running
 
 ```bash
   pnpm install
