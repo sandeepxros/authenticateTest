@@ -14,8 +14,12 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       database: secrets.PGDATABASE,
       entities: [__dirname + '/../**/*.entity{.ts,.js}'],
       synchronize: secrets.AUTOSYNC_DB === 'TRUE',
-      logging: secrets.DB_LOGGING==="TRUE",
-      autoLoadEntities:true,
+      logging: secrets.DB_LOGGING === 'TRUE',
+      autoLoadEntities: true,
+      ssl:
+        process.env.env === 'production'
+          ? { rejectUnauthorized: false }
+          : false,
     };
   }
 }
