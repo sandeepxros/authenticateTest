@@ -10,8 +10,12 @@ const config = {
   entities: ['src/api/entities/*.entity{.ts,.js}'],
   migrations: ['src/migrations/*{.ts,.js}'],
   autoLoadEntities: true,
-  synchronize: false, 
+  synchronize: false,
   migrationsTableName: 'spam-test-api-migrations',
+  ssl:
+    process.env.env === 'production'
+      ? { rejectUnauthorized: false }
+      : false,
 };
 
 export default new DataSource(config as DataSourceOptions);
